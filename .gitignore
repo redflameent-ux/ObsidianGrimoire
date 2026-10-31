@@ -1,0 +1,7 @@
+build/
+cmake-build-*/
+/JUCE/
+.vs/
+*.user
+.DS_Store
+Builds/
