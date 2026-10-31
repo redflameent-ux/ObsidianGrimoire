@@ -24,15 +24,6 @@ See [DESIGN.md](DESIGN.md) for the tokens and component list.
 
 Each plugin is its own CMake target, sharing the header-only kit in `Source/redflame/`.
 
-## Build
-JUCE 8.0.4, C++17, CMake (same setup as the TRANCE-6 repos: uses a local `../JUCE`
-checkout if present, otherwise fetches 8.0.4). Formats: VST3, AU, Standalone.
-
-```bash
-cmake -S . -B build
-cmake --build build --target ORACLE_Standalone --config Debug
-```
-
 ## Status
 `v0.2.0` - the UI kit and the full ORACLE **SYNTH page**: top bar, the upper row
 (OSC A / OSC B / HARMONICS / CALI / FILTER) and the lower row (ENVELOPES with ENV 1-3
