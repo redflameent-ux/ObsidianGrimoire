@@ -1,7 +1,10 @@
 ﻿# The TRANCE-6 Obsidian Grimoire
 
+![The TRANCE-6 Obsidian Grimoire](assets/banner.jpg)
+
 Round two of the plugin line by **Red Flame Entertainment**: eight plugins on one shared
-JUCE/C++ UI kit, packaged together as *The TRANCE-6 Obsidian Grimoire*.
+JUCE/C++ UI kit, packaged together as *The TRANCE-6 Obsidian Grimoire*. Per-plugin
+emblems are in [`assets/emblems/`](assets/emblems).
 
 - **ORACLE** - hybrid wavetable synth (royal blue)
 - **SIGIL** - modal resonator synth (periwinkle)
