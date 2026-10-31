@@ -72,6 +72,17 @@ FoundationEditor::FoundationEditor (FoundationProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Bus Glue", [this] { auto& a = proc.apvts;
+        rf::setP (a, fnd::comp, 35); rf::setP (a, fnd::thick, 25); rf::setP (a, fnd::loud, 20); rf::setP (a, fnd::mix, 100); });
+    add ("Loud Master", [this] { auto& a = proc.apvts;
+        rf::setP (a, fnd::loud, 60); rf::setP (a, fnd::comp, 40); rf::setP (a, fnd::thick, 30); });
+    add ("Warm Saturate", [this] { auto& a = proc.apvts;
+        rf::setP (a, fnd::thick, 50); rf::setP (a, fnd::color, 20); rf::setP (a, fnd::comp, 20); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1500, 820);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1240, 720, 2400, 1400);

@@ -82,6 +82,16 @@ CleanseEditor::CleanseEditor (CleanseProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Flat", [this] { proc.eq.reset(); curve.repaint(); selectBand (selBand); });
+    add ("Air Lift", [this] { auto& b = proc.eq.bands;
+        b[0].on = true; b[1].on = true; b[7].on = true; b[7].gain = 3.0f; curve.repaint(); selectBand (selBand); });
+    add ("Low Control", [this] { auto& b = proc.eq.bands;
+        b[0].on = true; b[0].freq = 35.0f; b[1].on = true; b[1].gain = -2.0f; curve.repaint(); selectBand (selBand); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1520, 900);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1260, 800, 2400, 1500);

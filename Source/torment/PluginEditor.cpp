@@ -82,6 +82,17 @@ TormentEditor::TormentEditor (TormentProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Tape Warmth", [this] { auto& a = proc.apvts;
+        rf::setP (a, tid::tDrive, 30); rf::setP (a, tid::tHiss, 10); rf::setP (a, tid::vTone, 40); rf::setP (a, tid::mix, 60); });
+    add ("Crushed", [this] { auto& a = proc.apvts;
+        rf::setP (a, tid::dRate, 50); rf::setP (a, tid::dBits, 60); rf::setP (a, tid::mix, 80); });
+    add ("Dusty Vinyl", [this] { auto& a = proc.apvts;
+        rf::setP (a, tid::vDust, 40); rf::setP (a, tid::vPops, 30); rf::setP (a, tid::vTone, 45); rf::setP (a, tid::mix, 70); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1480, 900);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1240, 800, 2400, 1500);

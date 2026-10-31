@@ -90,6 +90,27 @@ IncantEditor::IncantEditor (IncantProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Four Floor", [this] { auto& p = proc.pattern; p.clearAll();
+        for (int s = 0; s < 16; s += 4) p.set (0, s, 0.95f);
+        p.set (1, 4, 0.9f); p.set (1, 12, 0.9f);
+        for (int s = 2; s < 16; s += 4) p.set (2, s, 0.6f);
+        p.set (3, 2, 0.5f); p.set (3, 10, 0.5f);
+        rf::setP (proc.apvts, fid::energy, 60); rf::setP (proc.apvts, fid::swing, 50); rf::setP (proc.apvts, fid::complexr, 50); grid.repaint(); });
+    add ("Breakbeat", [this] { auto& p = proc.pattern; p.clearAll();
+        p.set (0, 0, 0.95f); p.set (0, 6, 0.6f); p.set (0, 10, 0.8f);
+        p.set (1, 4, 0.9f); p.set (1, 12, 0.9f); p.set (1, 14, 0.5f);
+        for (int s = 0; s < 16; s += 2) p.set (2, s, 0.5f);
+        rf::setP (proc.apvts, fid::swing, 58); rf::setP (proc.apvts, fid::energy, 65); grid.repaint(); });
+    add ("Minimal", [this] { auto& p = proc.pattern; p.clearAll();
+        p.set (0, 0, 0.9f); p.set (0, 8, 0.9f);
+        for (int s = 2; s < 16; s += 4) p.set (2, s, 0.5f);
+        p.set (4, 4, 0.6f); p.set (4, 12, 0.6f);
+        rf::setP (proc.apvts, fid::swing, 55); rf::setP (proc.apvts, fid::energy, 40); rf::setP (proc.apvts, fid::thinThk, -40); grid.repaint(); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1480, 920);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1240, 800, 2400, 1500);

@@ -173,5 +173,7 @@ private:
     juce::Rectangle<int> helpStrip;
     std::vector<Knob*> allKnobs;
 
+    std::unique_ptr<rf::PresetManager> presetMgr;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CleanseEditor)
 };

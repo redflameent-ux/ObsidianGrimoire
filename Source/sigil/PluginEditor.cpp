@@ -100,6 +100,26 @@ SigilEditor::SigilEditor (SigilProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Init", [this] { auto& a = proc.apvts;
+        rf::setP (a, sid::structure, 25); rf::setP (a, sid::bright, 50); rf::setP (a, sid::damping, 75); rf::setP (a, sid::position, 48); rf::setP (a, sid::strike, 100);
+        rf::setP (a, sid::atk, 1); rf::setP (a, sid::dec, 1000); rf::setP (a, sid::sus, 100); rf::setP (a, sid::rel, 4600); rf::setP (a, sid::reverbOn, 1); rf::setP (a, sid::reverbMix, 25); });
+    add ("Glass Mallet", [this] { auto& a = proc.apvts;
+        rf::setP (a, sid::structure, 10); rf::setP (a, sid::bright, 80); rf::setP (a, sid::damping, 55); rf::setP (a, sid::position, 30); rf::setP (a, sid::strike, 100);
+        rf::setP (a, sid::atk, 1); rf::setP (a, sid::dec, 400); rf::setP (a, sid::sus, 0); rf::setP (a, sid::rel, 1500); });
+    add ("Bowed Drone", [this] { auto& a = proc.apvts;
+        rf::setP (a, sid::bowblow, 80); rf::setP (a, sid::strike, 20); rf::setP (a, sid::damping, 95); rf::setP (a, sid::bright, 40);
+        rf::setP (a, sid::atk, 1500); rf::setP (a, sid::sus, 100); rf::setP (a, sid::rel, 3000); rf::setP (a, sid::reverbMix, 50); });
+    add ("Metal Perc", [this] { auto& a = proc.apvts;
+        rf::setP (a, sid::structure, 60); rf::setP (a, sid::bright, 90); rf::setP (a, sid::damping, 40); rf::setP (a, sid::position, 70);
+        rf::setP (a, sid::dec, 800); rf::setP (a, sid::sus, 0); rf::setP (a, sid::rel, 1200); });
+    add ("Deep Space", [this] { auto& a = proc.apvts;
+        rf::setP (a, sid::damping, 85); rf::setP (a, sid::bright, 35); rf::setP (a, sid::chorusOn, 1);
+        rf::setP (a, sid::reverbOn, 1); rf::setP (a, sid::reverbMix, 60); rf::setP (a, sid::reverbTime, 80); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1400, 900);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1180, 780, 2400, 1500);

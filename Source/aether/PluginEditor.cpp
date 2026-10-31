@@ -100,6 +100,31 @@ AetherEditor::AetherEditor (AetherProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Init", [this] { proc.stack.reset();
+        rf::setP (proc.apvts, aid::fAcut, 1800); rf::setP (proc.apvts, aid::fAres, 55);
+        rf::setP (proc.apvts, aid::eA, 0); rf::setP (proc.apvts, aid::eD, 600); rf::setP (proc.apvts, aid::eS, 100); rf::setP (proc.apvts, aid::eR, 250);
+        loadLayer (selLayer); });
+    add ("Warm Keys", [this] { auto& s = proc.stack; for (auto& l : s.layers) l.on = false;
+        s.layers[0].on = true; s.layers[0].wave = 2; s.layers[0].level = 90; s.layers[0].coarse = 0;
+        s.layers[1].on = true; s.layers[1].wave = 3; s.layers[1].level = 55; s.layers[1].coarse = 12;
+        rf::setP (proc.apvts, aid::fAcut, 2200); rf::setP (proc.apvts, aid::fAres, 20);
+        rf::setP (proc.apvts, aid::eA, 20); rf::setP (proc.apvts, aid::eD, 1200); rf::setP (proc.apvts, aid::eS, 80); rf::setP (proc.apvts, aid::eR, 600); loadLayer (selLayer); });
+    add ("Saw Stack", [this] { auto& s = proc.stack; for (auto& l : s.layers) l.on = false;
+        s.layers[0].on = true; s.layers[0].wave = 0; s.layers[0].level = 85; s.layers[0].fine = -7;
+        s.layers[1].on = true; s.layers[1].wave = 0; s.layers[1].level = 80; s.layers[1].fine = 7;
+        s.layers[2].on = true; s.layers[2].wave = 3; s.layers[2].level = 45; s.layers[2].coarse = -12;
+        rf::setP (proc.apvts, aid::fAcut, 4500); rf::setP (proc.apvts, aid::fAres, 30);
+        rf::setP (proc.apvts, aid::eA, 2); rf::setP (proc.apvts, aid::eD, 800); rf::setP (proc.apvts, aid::eS, 80); rf::setP (proc.apvts, aid::eR, 400); loadLayer (selLayer); });
+    add ("Lo Pad", [this] { auto& s = proc.stack; for (auto& l : s.layers) l.on = false;
+        s.layers[0].on = true; s.layers[0].wave = 2; s.layers[0].level = 80; s.layers[0].coarse = -12;
+        s.layers[1].on = true; s.layers[1].wave = 4; s.layers[1].level = 20;
+        rf::setP (proc.apvts, aid::fAcut, 1100); rf::setP (proc.apvts, aid::fAres, 25);
+        rf::setP (proc.apvts, aid::eA, 1500); rf::setP (proc.apvts, aid::eD, 2000); rf::setP (proc.apvts, aid::eS, 90); rf::setP (proc.apvts, aid::eR, 2500); loadLayer (selLayer); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1500, 964);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1260, 820, 2400, 1500);

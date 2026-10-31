@@ -2,6 +2,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "RedFlameTheme.h"
 #include "RedFlameMod.h"
+#include "RedFlamePresets.h"
 
 namespace rf
 {

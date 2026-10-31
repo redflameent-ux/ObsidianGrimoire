@@ -129,6 +129,32 @@ OracleEditor::OracleEditor (OracleProcessor& p)
     };
     refreshDots();
 
+    // ---- factory presets ----
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Init", [this] { auto& a = proc.apvts;
+        rf::setP (a, pid::aOn, 1); rf::setP (a, pid::bOn, 1); rf::setP (a, pid::aLevel, 100); rf::setP (a, pid::bLevel, 35);
+        rf::setP (a, pid::fType, 0); rf::setP (a, pid::fCutoff, 5200); rf::setP (a, pid::fReso, 20);
+        rf::setP (a, envId (1, "a"), 1); rf::setP (a, envId (1, "d"), 1000); rf::setP (a, envId (1, "s"), 100); rf::setP (a, envId (1, "r"), 400); });
+    add ("Aurora Pad", [this] { auto& a = proc.apvts;
+        rf::setP (a, pid::aLevel, 90); rf::setP (a, pid::bLevel, 70); rf::setP (a, pid::fType, 0); rf::setP (a, pid::fCutoff, 2400); rf::setP (a, pid::fReso, 25);
+        rf::setP (a, pid::hWidth, 45); rf::setP (a, pid::hSpread, 100); rf::setP (a, pid::vDrift, 30);
+        rf::setP (a, envId (1, "a"), 1400); rf::setP (a, envId (1, "d"), 2000); rf::setP (a, envId (1, "s"), 85); rf::setP (a, envId (1, "r"), 3000); });
+    add ("Bright Lead", [this] { auto& a = proc.apvts;
+        rf::setP (a, pid::vMode, 1); rf::setP (a, pid::aLevel, 100); rf::setP (a, pid::bLevel, 20); rf::setP (a, pid::vGlide, 40);
+        rf::setP (a, pid::fType, 0); rf::setP (a, pid::fCutoff, 9000); rf::setP (a, pid::fReso, 35); rf::setP (a, pid::fDrive, 55);
+        rf::setP (a, envId (1, "a"), 2); rf::setP (a, envId (1, "d"), 600); rf::setP (a, envId (1, "s"), 70); rf::setP (a, envId (1, "r"), 250); });
+    add ("Deep Bass", [this] { auto& a = proc.apvts;
+        rf::setP (a, pid::vMode, 1); rf::setP (a, pid::aOct, -1); rf::setP (a, pid::aLevel, 100); rf::setP (a, pid::bOct, -1); rf::setP (a, pid::bLevel, 40);
+        rf::setP (a, pid::fType, 0); rf::setP (a, pid::fCutoff, 1200); rf::setP (a, pid::fReso, 30); rf::setP (a, pid::fDrive, 60);
+        rf::setP (a, envId (1, "a"), 1); rf::setP (a, envId (1, "d"), 400); rf::setP (a, envId (1, "s"), 60); rf::setP (a, envId (1, "r"), 200); });
+    add ("Glass Bell", [this] { auto& a = proc.apvts;
+        rf::setP (a, pid::aLevel, 80); rf::setP (a, pid::bLevel, 50); rf::setP (a, pid::hCentre, 2.0f); rf::setP (a, pid::hWidth, 20); rf::setP (a, pid::hMix, 60);
+        rf::setP (a, pid::fType, 0); rf::setP (a, pid::fCutoff, 8000); rf::setP (a, pid::fReso, 10);
+        rf::setP (a, envId (1, "a"), 1); rf::setP (a, envId (1, "d"), 1500); rf::setP (a, envId (1, "s"), 0); rf::setP (a, envId (1, "r"), 1800); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1360, 884);
     setResizable (true, true);
     if (auto* c = getConstrainer()) c->setSizeLimits (1150, 760, 2300, 1500);

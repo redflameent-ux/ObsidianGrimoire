@@ -96,6 +96,17 @@ EtherealEditor::EtherealEditor (EtherealProcessor& p)
     { juce::MessageManager::callAsync ([sp] { if (sp != nullptr) sp->refreshDots(); }); };
     refreshDots();
 
+    std::vector<rf::PresetManager::Factory> fac;
+    auto add = [&fac] (const char* nm, std::function<void()> fn) { fac.push_back ({ nm, std::move (fn) }); };
+    add ("Open Air", [this] { auto& a = proc.apvts;
+        rf::setP (a, eid::decay, 2.5f); rf::setP (a, eid::size, 63); rf::setP (a, eid::mix, 35); rf::setP (a, eid::damp, 7000); rf::setP (a, eid::width, 100); });
+    add ("Cathedral", [this] { auto& a = proc.apvts;
+        rf::setP (a, eid::decay, 8.0f); rf::setP (a, eid::size, 85); rf::setP (a, eid::mix, 45); rf::setP (a, eid::damp, 5000); rf::setP (a, eid::preDelay, 40); });
+    add ("Ambient Wash", [this] { auto& a = proc.apvts;
+        rf::setP (a, eid::decay, 12.0f); rf::setP (a, eid::size, 90); rf::setP (a, eid::mix, 60); rf::setP (a, eid::modd, 50); rf::setP (a, eid::drift, 40); });
+    presetMgr = std::make_unique<rf::PresetManager> (proc, std::move (fac));
+    presetMgr->attach (topBar.preset, topBar.prevP, topBar.nextP, topBar.save);
+
     setSize (1400, 880);
     setResizable (true, true);
     if (auto* cst = getConstrainer()) cst->setSizeLimits (1180, 760, 2400, 1500);
