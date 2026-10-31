@@ -5,3 +5,5 @@ cmake-build-*/
 *.user
 .DS_Store
 Builds/
+installer/Output/
+
