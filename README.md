@@ -22,33 +22,7 @@ and re-skins with its own accent colour.
 
 See [DESIGN.md](DESIGN.md) for the tokens and component list.
 
-## Layout
-```
-Source/
-  redflame/            # the shared, header-only UI kit
-    RedFlameTheme.h    #   colour tokens, metrics, RedFlameLookAndFeel (metal knob)
-    RedFlameWidgets.h  #   Panel, Knob, Toggle, Choice, Segmented
-    RedFlameTopBar.h   #   brand bar: wordmark, tabs, presets, master, meter
-    RedFlameModRail.h  #   bottom mod-source rail + chips
-  oracle/             # ORACLE  - hybrid wavetable synth
-    Params.h, PluginProcessor.*, PluginEditor.*
-  sigil/              # SIGIL    - modal resonator synth (Karplus-Strong voice)
-    Params.h, PluginProcessor.*, PluginEditor.*
-  ethereal/           # ETHEREAL - galactic space reverb (effect)
-    Params.h, PluginProcessor.*, PluginEditor.*
-  incant/             # INCANT   - groove generator (step grid + synth drums)
-    Params.h, Pattern.h, PluginProcessor.*, PluginEditor.*
-  aether/             # AETHER   - sample-stack synth (10 layers)
-    Params.h, LayerData.h, PluginProcessor.*, PluginEditor.*
-  torment/            # TORMENT  - hi-fi lo-fi processor (effect, CRT scope)
-    Params.h, PluginProcessor.*, PluginEditor.*
-  foundation/         # FOUNDATION - saturation + loudness (effect)
-    Params.h, PluginProcessor.*, PluginEditor.*
-  cleanse/            # CLEANSE  - mastering / dynamic EQ (effect)
-    Params.h, BandData.h, PluginProcessor.*, PluginEditor.*
-```
-Each is its own CMake target (ORACLE/SIGIL/ETHEREAL/INCANT/AETHER/TORMENT/FOUNDATION/CLEANSE)
-sharing the header-only kit in `Source/redflame/`.
+Each plugin is its own CMake target, sharing the header-only kit in `Source/redflame/`.
 
 ## Build
 JUCE 8.0.4, C++17, CMake (same setup as the TRANCE-6 repos: uses a local `../JUCE`
